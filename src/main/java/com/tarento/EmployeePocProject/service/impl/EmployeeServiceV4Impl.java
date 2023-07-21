@@ -132,6 +132,11 @@ public class EmployeeServiceV4Impl implements IEmployeeServiceV4 {
             Optional<EmployeeV2> existingEmployeeOptional = employeeRepoV2.findById(id);
             if (existingEmployeeOptional.isPresent()) {
                 EmployeeV2 existingEmployee = existingEmployeeOptional.get();
+                String errorMessage = validateEmployeeSchema(updatedEmployee.getJsonData());
+                if (!errorMessage.isEmpty()) {
+                    employeeService.createErrorResponse(response, errorMessage, HttpStatus.BAD_REQUEST, "FAILED");
+                    return response;
+                }
                 existingEmployee.setJsonData(updatedEmployee.getJsonData());
                 EmployeeV2 updatedEmployeeEntity = employeeRepoV2.save(existingEmployee);
                 if (!ObjectUtils.isEmpty(updatedEmployeeEntity)) {
